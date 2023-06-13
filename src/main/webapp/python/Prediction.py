@@ -1,17 +1,25 @@
 from joblib import load
 from Characteristics import Characteristics
+from Operator import Operator
 import sys
 import ast
 
 def prediction(model_path,language):
+    sardinas = Operator()
     character = Characteristics()
     language = ast.literal_eval(language)
     X_test = character.characteristics(language=language)
     model = load(model_path)
     prediction = model.predict([X_test])
+    petterson = sardinas.petterson(langage=language)
+
     print(language)
-    print("len",str(len(language)) + "\n")
-    print(prediction)
+    print(";")
+    ML_message = "selon ML c un code" if prediction[0]==1 else "selon ML c est pas un code"
+    print(ML_message)
+    print(";")
+    Peterson_message = "selon Petterson c un code" if petterson==1 else "selon Petterson c est pas code"
+    print(Peterson_message)
 #Get command-line arguments
 args = sys.argv
 

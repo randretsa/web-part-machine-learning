@@ -12,4 +12,9 @@ public class StringFormatter {
 
         return  representation;
     }
+
+    public String[] interpretPython(String pythonOutput){
+        String[] list = pythonOutput.split(";");
+        return list;
+    }
 }

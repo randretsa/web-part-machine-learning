@@ -24,7 +24,7 @@ public class HelloServlet extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/form.jsp");
         dispatcher.forward(request,response);
     }
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("text/html");
         ServletContext context = getServletContext();
         String context_path = context.getRealPath("/");
@@ -33,17 +33,25 @@ public class HelloServlet extends HttpServlet {
         CommandExecutor cmd = null;
         String script_path = context_path+"/python/Prediction.py";
         String model_path = context_path+"/python/model_saved.joblib";
-
+        StringFormatter formatter = new StringFormatter();
         //String csv = "011,01000,1110110,11,101";
         String csv = request.getParameter("code");
-        String argument = new StringFormatter().csv_to_array_string(csv);
+        String argument = formatter.csv_to_array_string(csv);
 
         try{
             cmd = new CommandExecutor();
-            out.print(cmd.executePythonScript(script_path,model_path,argument));
+            String pythonOutput = cmd.executePythonScript(script_path,model_path,argument);
+            String[] resultat = formatter.interpretPython(pythonOutput);
+
+            request.setAttribute("result", resultat);
+
         }catch (Exception exception){
             out.print(exception.getMessage());
         }
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/resultat.jsp");
+        dispatcher.forward(request,response);
+
 
     }
 
